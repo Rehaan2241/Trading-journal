@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Strategy · Trading Journal</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <div class="app-title">📈 Trading Journal</div>
+    <nav class="app-nav" id="app-nav"></nav>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+      <div class="computed-hint" style="margin:0;">
+        Save your setups here (e.g. "Type 1"), tag which confluences define them, and write yourself notes on
+        how to trade each one. When adding a trade, pick the setup first and its confluences show up.
+      </div>
+      <button class="btn btn-primary" id="btn-new-strategy" style="white-space:nowrap; margin-left:14px;">+ New Strategy</button>
+    </div>
+
+    <div class="strategy-grid" id="strategy-grid">
+      <div class="empty-state">Loading strategies…</div>
+    </div>
+
+    <div class="panel" style="margin-top:20px;">
+      <h3>Mistake / Emotion Tags <span style="font-weight:400; color:var(--text-muted);">(global list — tag these on any trade regardless of setup)</span></h3>
+      <div class="mistake-tag-list" id="strategy-mistake-tag-list"></div>
+      <div style="display:flex; gap:8px; margin-top:10px; max-width:420px;">
+        <input type="text" id="strategy-new-mistake-tag" placeholder="e.g. Revenge Trade, FOMO Entry" style="flex:1;" />
+        <button type="button" class="btn btn-sm" id="strategy-btn-add-mistake-tag">+ Add</button>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:20px;">
+      <h3>Pairs <span style="font-weight:400; color:var(--text-muted);">(shown in the Trades form's pair dropdown)</span></h3>
+      <div class="mistake-tag-list" id="strategy-pair-list"></div>
+      <div style="display:flex; gap:8px; margin-top:10px; max-width:420px;">
+        <input type="text" id="strategy-new-pair" placeholder="e.g. GBP/JPY" style="flex:1;" />
+        <button type="button" class="btn btn-sm" id="strategy-btn-add-pair">+ Add</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Strategy Modal -->
+  <div class="modal-overlay" id="strategy-modal" style="display:none;">
+    <div class="modal">
+      <h2 id="strategy-modal-title">New Strategy</h2>
+      <form id="strategy-form">
+        <input type="hidden" id="strategy-id" />
+        <div class="form-grid">
+          <div class="field full">
+            <label>Name</label>
+            <input type="text" id="f-strategy-name" placeholder="e.g. Type 1" required />
+          </div>
+
+          <div class="field full">
+            <label>Confluences <span style="font-weight:400;">(your own — use ↑/↓ to prioritize, 1 is highest)</span></label>
+            <div class="confluence-builder" id="confluence-builder"></div>
+            <button type="button" class="btn btn-sm" id="btn-add-confluence" style="margin-top:8px;">+ Add confluence</button>
+          </div>
+
+          <div class="field full">
+            <label>Notes</label>
+            <textarea id="f-strategy-notes" placeholder="Write yourself how this setup works, entry rules, invalidation, etc." style="min-height:120px;"></textarea>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn" id="btn-strategy-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-strategy-save">Save Strategy</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Strategy Performance Modal -->
+  <div class="modal-overlay" id="performance-modal" style="display:none;">
+    <div class="modal">
+      <h2 id="performance-modal-title">Strategy Performance</h2>
+
+      <div class="perf-filters-bar" style="margin-bottom:14px;">
+        <select id="perf-account-type">
+          <option value="">Master / Phase: All</option>
+          <option value="Master">Master</option>
+          <option value="Phase">Phase</option>
+        </select>
+        <input type="date" id="perf-date-from" title="From date" />
+        <input type="date" id="perf-date-to" title="To date" />
+      </div>
+
+      <div id="performance-body">
+        <div class="empty-state">Loading…</div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-primary" id="btn-performance-close">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/strategy.js"></script>
+  <script>
+    renderNav("strategy");
+    initStrategyPage();
+  </script>
+</body>
+</html>

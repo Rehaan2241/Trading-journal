@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Challenges · Trading Journal</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <div class="app-title">📈 Trading Journal</div>
+    <nav class="app-nav" id="app-nav"></nav>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+      <div class="computed-hint" style="margin:0;">
+        Track prop-firm / funded-phase challenges here: profit target used, max drawdown used, and days remaining —
+        computed automatically from any trade you tag with "Phase" and link to a challenge.
+      </div>
+      <button class="btn btn-primary" id="btn-new-challenge" style="white-space:nowrap; margin-left:14px;">+ New Challenge</button>
+    </div>
+
+    <div class="challenge-grid" id="challenge-grid">
+      <div class="empty-state">Loading challenges…</div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Challenge Modal -->
+  <div class="modal-overlay" id="challenge-modal" style="display:none;">
+    <div class="modal">
+      <h2 id="challenge-modal-title">New Challenge</h2>
+      <form id="challenge-form">
+        <input type="hidden" id="challenge-id" />
+        <div class="form-grid">
+          <div class="field full">
+            <label>Name</label>
+            <input type="text" id="f-challenge-name" placeholder="e.g. FTMO Phase 1 - July" required />
+          </div>
+
+          <div class="field">
+            <label>Account Size</label>
+            <select id="f-challenge-account-size">
+              <option value="5000">$5,000</option>
+              <option value="10000" selected>$10,000</option>
+              <option value="25000">$25,000</option>
+              <option value="50000">$50,000</option>
+              <option value="100000">$100,000</option>
+            </select>
+          </div>
+
+          <div class="field full">
+            <label>Account Type</label>
+            <div class="toggle-group" id="f-challenge-account-type-toggle">
+              <button type="button" data-value="Master">Master Account</button>
+              <button type="button" data-value="Phase">Phase Account</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Start Date</label>
+            <input type="date" id="f-challenge-start-date" required />
+          </div>
+
+          <div class="field">
+            <label>Profit Target (%)</label>
+            <input type="number" step="0.1" id="f-challenge-profit-target" value="8" required />
+          </div>
+
+          <div class="field">
+            <label>Max Drawdown (%)</label>
+            <input type="number" step="0.1" id="f-challenge-max-drawdown" value="10" required />
+          </div>
+
+          <div class="field">
+            <label>Daily Drawdown (%) <span style="font-weight:400;">(blank = no daily limit)</span></label>
+            <input type="number" step="0.1" id="f-challenge-daily-drawdown" value="5" placeholder="e.g. 5" />
+          </div>
+
+          <div class="field">
+            <label>Days Allowed <span style="font-weight:400;">(blank = no time limit)</span></label>
+            <input type="number" step="1" id="f-challenge-days-allowed" placeholder="e.g. 30" />
+          </div>
+
+          <div class="field">
+            <label>Status</label>
+            <div class="toggle-group" id="f-challenge-active-toggle">
+              <button type="button" data-value="true">Active</button>
+              <button type="button" data-value="false">Inactive</button>
+            </div>
+          </div>
+
+          <div class="field full">
+            <label>Notes</label>
+            <textarea id="f-challenge-notes" placeholder="Firm rules, payout terms, reminders to yourself, etc." style="min-height:90px;"></textarea>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn" id="btn-challenge-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Challenge</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Challenge Trades Modal: opens when you click a challenge/account card,
+       lists every trade logged on that account. Click a trade in the list to
+       open the same shared Trade Detail popup used on the Outcome page. -->
+  <div class="modal-overlay" id="challenge-trades-modal" style="display:none;">
+    <div class="modal challenge-trades-modal">
+      <div class="modal-header-row">
+        <h2 id="challenge-trades-title">Trades</h2>
+        <button type="button" class="btn btn-sm" id="challenge-trades-close">✕ Close</button>
+      </div>
+      <div id="challenge-trades-body"><div class="empty-state">Loading…</div></div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/challenges.js"></script>
+  <script>
+    renderNav("challenges");
+    initChallengesPage();
+  </script>
+</body>
+</html>

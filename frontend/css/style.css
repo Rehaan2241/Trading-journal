@@ -1,0 +1,1171 @@
+:root {
+  --bg: #191919;
+  --bg-elevated: #202020;
+  --bg-card: #252525;
+  --bg-hover: #2f2f2f;
+  --border: #373737;
+  --text: #e9e9e7;
+  --text-muted: #9b9b9b;
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --green: #4caf78;
+  --green-bg: rgba(76, 175, 120, 0.15);
+  --red: #e0605a;
+  --red-bg: rgba(224, 96, 90, 0.15);
+  --yellow: #d3a13a;
+  --yellow-bg: rgba(211, 161, 58, 0.15);
+  --radius: 8px;
+  --radius-sm: 5px;
+
+  /* Confluence priority levels: 1) Liquidity Sweep + HTF-PDA (tied, same
+     color)  2) Displacement  3) SMT  4) IFVG */
+  --conf-lvl1: #c084fc;
+  --conf-lvl1-bg: rgba(192, 132, 252, 0.15);
+  --conf-lvl2: #60a5fa;
+  --conf-lvl2-bg: rgba(96, 165, 250, 0.15);
+  --conf-lvl3: #34d399;
+  --conf-lvl3-bg: rgba(52, 211, 153, 0.15);
+  --conf-lvl4: #fbbf24;
+  --conf-lvl4-bg: rgba(251, 191, 36, 0.15);
+}
+
+* { box-sizing: border-box; }
+
+/* ---------- Base form control styling ----------
+   Fallback dark theme for ANY bare <input>/<select>/<textarea> that isn't
+   already covered by a more specific rule (.field input, .filters-panel
+   input, etc). Before this rule existed, form controls rendered outside
+   those specific wrappers (tag "+ Add" inputs on the Strategy page, the
+   Master/Phase + date filters in the Strategy Performance modal, the
+   strategy select on the Calendar page, ...) fell back to the browser's
+   default white styling, which looked out of place against the dark UI. */
+input[type="text"],
+input[type="number"],
+input[type="date"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+select,
+textarea {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  accent-color: var(--accent);
+}
+
+input[type="text"]::placeholder,
+input[type="search"]::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
+}
+
+select { cursor: pointer; }
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="search"]:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* The native date-picker calendar icon defaults to a dark glyph that's
+   nearly invisible on our dark background -- invert it so it's visible. */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.75);
+  cursor: pointer;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+}
+
+a { color: inherit; text-decoration: none; }
+
+.app-shell {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 28px 32px 60px;
+}
+
+/* ---------- Header / Nav ---------- */
+.app-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0 0 18px;
+}
+
+.app-nav {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 14px;
+}
+
+.app-nav a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.app-nav a:hover { background: var(--bg-hover); color: var(--text); }
+
+.app-nav a.active {
+  background: var(--bg-card);
+  color: var(--text);
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--bg-card);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn:hover { background: var(--bg-hover); }
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.btn-primary:hover { background: var(--accent-hover); }
+
+.btn-danger { color: var(--red); }
+.btn-danger:hover { background: var(--red-bg); }
+
+.btn-sm { padding: 5px 10px; font-size: 12px; }
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.btn:disabled:hover { background: var(--bg-card); }
+
+/* ---------- Cards / Stats ---------- */
+.stat-grid {
+  display: grid;
+  /* auto-fit + a slightly smaller min width (down from 180px) means 7 cards
+     comfortably share a single row on the app's ~1230px content width, but
+     it still wraps to 2 rows gracefully on narrower/tablet screens instead
+     of squeezing or overflowing. */
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+}
+
+.stat-card .label {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+
+.stat-card .value { font-size: 24px; font-weight: 700; }
+.stat-card .value.positive { color: var(--green); }
+.stat-card .value.negative { color: var(--red); }
+
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+}
+
+.panel h3 {
+  margin: 0 0 14px;
+  font-size: 14px;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.panel canvas { max-height: 260px; }
+
+/* ---------- Equity curve account filter (Dashboard) ---------- */
+.equity-account-filter {
+  margin: 0 0 14px;
+}
+
+.equity-account-filter:empty { margin: 0; }
+
+/* ---------- Filters bar (collapsible) ---------- */
+.filters-bar {
+  margin-bottom: 20px;
+}
+
+.filters-toggle-row {
+  display: flex;
+}
+
+.filter-toggle-btn {
+  position: relative;
+}
+
+.filter-toggle-btn.has-active-filters {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.filter-badge {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 7px;
+  margin-left: 2px;
+}
+
+.filters-panel {
+  display: none;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+  padding: 14px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.filters-panel.open {
+  display: flex;
+}
+
+.filters-panel select,
+.filters-panel input {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  font-size: 13px;
+}
+
+.filters-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
+}
+
+.filters-panel .clear-filters {
+  color: var(--text-muted);
+  font-size: 12px;
+  cursor: pointer;
+}
+.filters-panel .clear-filters:hover { color: var(--text); }
+
+/* ---------- Account type selector (Dashboard: All / Master / Phase) ---------- */
+.account-type-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.account-type-bar select,
+#equity-account-select {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* ---------- Table ---------- */
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+thead th {
+  text-align: left;
+  padding: 10px 12px;
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  font-weight: 600;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+}
+
+tbody td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+tbody tr:hover { background: var(--bg-hover); }
+tbody tr.trade-row-clickable { cursor: pointer; }
+tbody tr:last-child td { border-bottom: none; }
+
+/* ---------- Badges / chips ---------- */
+.badge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.badge-win { background: var(--green-bg); color: var(--green); }
+.badge-loss { background: var(--red-bg); color: var(--red); }
+.badge-breakeven { background: var(--yellow-bg); color: var(--yellow); }
+.badge-long { background: var(--green-bg); color: var(--green); }
+.badge-short { background: var(--red-bg); color: var(--red); }
+.badge-master { background: rgba(59, 130, 246, 0.15); color: var(--accent); }
+.badge-phase { background: var(--yellow-bg); color: var(--yellow); }
+
+.chip {
+  display: inline-block;
+  padding: 2px 8px;
+  margin: 1px 3px 1px 0;
+  border-radius: 999px;
+  font-size: 10.5px;
+  background: var(--bg-hover);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+.chip.on { background: rgba(59,130,246,0.15); color: var(--accent); border-color: transparent; }
+
+/* Confluence priority-level colors: level 1 (Liquidity Sweep / HTF-PDA) share
+   a color since they're the same priority; 2=Displacement, 3=SMT, 4=IFVG. */
+.chip.conf-lvl-1 { background: var(--conf-lvl1-bg); color: var(--conf-lvl1); }
+.chip.conf-lvl-2 { background: var(--conf-lvl2-bg); color: var(--conf-lvl2); }
+.chip.conf-lvl-3 { background: var(--conf-lvl3-bg); color: var(--conf-lvl3); }
+.chip.conf-lvl-4 { background: var(--conf-lvl4-bg); color: var(--conf-lvl4); }
+
+.chip.chip-skipped {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px dashed var(--border);
+  text-decoration: line-through;
+  opacity: 0.75;
+}
+
+.badge-setup { background: var(--conf-lvl1-bg); color: var(--conf-lvl1); }
+
+.confluence-item.conf-lvl-1 { border-left: 3px solid var(--conf-lvl1); }
+.confluence-item.conf-lvl-2 { border-left: 3px solid var(--conf-lvl2); }
+.confluence-item.conf-lvl-3 { border-left: 3px solid var(--conf-lvl3); }
+.confluence-item.conf-lvl-4 { border-left: 3px solid var(--conf-lvl4); }
+
+.confluence-item .priority-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--bg-hover);
+  color: var(--text-muted);
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+.setup-gate-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 10px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.screenshot-preview-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.screenshot-thumb {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.screenshot-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.screenshot-thumb .screenshot-remove {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 20px;
+  height: 20px;
+  line-height: 18px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  font-size: 12px;
+  cursor: pointer;
+}
+.screenshot-thumb .screenshot-remove:hover { background: var(--red); }
+
+.screenshot-tf-tag {
+  position: absolute;
+  bottom: 2px;
+  left: 2px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* ---- Per-timeframe screenshot slots (Add/Edit Trade form) ---- */
+.tf-screenshot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+.tf-slot { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.tf-slot-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.tf-slot-preview {
+  position: relative;
+  width: 92px;
+  height: 92px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.tf-slot-preview img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.tf-slot-preview .screenshot-remove { position: absolute; top: 2px; right: 2px; }
+.tf-slot-empty {
+  width: 92px;
+  height: 92px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  cursor: pointer;
+  text-align: center;
+}
+.tf-slot-empty:hover { border-color: var(--accent); color: var(--accent); }
+
+.unassigned-screenshot-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
+}
+.unassigned-shot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px;
+  width: 108px;
+}
+.unassigned-shot img {
+  width: 92px;
+  height: 92px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  display: block;
+}
+.unassigned-shot .unassigned-tf-select { width: 100%; font-size: 12px; padding: 4px; }
+.unassigned-shot .unassigned-remove-btn { width: 100%; padding: 3px 0; font-size: 11px; }
+
+/* ---- Pictures page ---- */
+.picture-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+.picture-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.15s;
+  display: flex;
+  flex-direction: column;
+}
+.picture-card:hover { border-color: var(--accent); }
+.picture-card-img-wrap { position: relative; width: 100%; height: 170px; background: var(--bg-hover); }
+.picture-card-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.picture-card-count {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.picture-card-body { padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+.picture-card-top { display: flex; justify-content: space-between; align-items: center; }
+.picture-card-pair { font-weight: 700; font-size: 14px; }
+.picture-card-meta { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); }
+
+/* ---- Picture lightbox modal ---- */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  padding: 24px;
+}
+.lightbox-box {
+  max-width: 880px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+}
+.lightbox-header-row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+}
+.lightbox-title { font-size: 15px; font-weight: 600; }
+.lightbox-image-wrap {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+.lightbox-image-wrap img {
+  max-width: 100%;
+  max-height: 68vh;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+}
+.lightbox-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  border: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lightbox-arrow:hover { background: var(--accent); }
+.lightbox-arrow.prev { left: 6px; }
+.lightbox-arrow.next { right: 6px; }
+.lightbox-tf-strip { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.lightbox-tf-chip {
+  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.lightbox-tf-chip.active { border-color: var(--accent); color: var(--accent); background: rgba(59, 130, 246, 0.15); }
+.lightbox-caption { color: var(--text-muted); font-size: 12px; }
+
+/* ---------- Confluence builder (Strategy page: add/reorder/remove) ---------- */
+.confluence-builder {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.confluence-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+}
+
+.confluence-row.conf-lvl-1 { border-left: 3px solid var(--conf-lvl1); }
+.confluence-row.conf-lvl-2 { border-left: 3px solid var(--conf-lvl2); }
+.confluence-row.conf-lvl-3 { border-left: 3px solid var(--conf-lvl3); }
+.confluence-row.conf-lvl-4 { border-left: 3px solid var(--conf-lvl4); }
+
+.confluence-row input.confluence-row-name {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ---------- Strategy performance panel (win rate by confluence) ---------- */
+.perf-conf-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.perf-conf-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr 50px;
+  align-items: center;
+  gap: 10px;
+}
+
+.perf-conf-label {
+  font-size: 12.5px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.perf-bar-track {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--bg-hover);
+  overflow: hidden;
+}
+
+.perf-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+}
+.perf-bar-fill.conf-lvl-1 { background: var(--conf-lvl1); }
+.perf-bar-fill.conf-lvl-2 { background: var(--conf-lvl2); }
+.perf-bar-fill.conf-lvl-3 { background: var(--conf-lvl3); }
+.perf-bar-fill.conf-lvl-4 { background: var(--conf-lvl4); }
+
+.perf-conf-value {
+  font-size: 12.5px;
+  font-weight: 700;
+  text-align: right;
+}
+
+/* ---------- Strategy ("Setup") page ---------- */
+.strategy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+.strategy-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+}
+
+.strategy-card h3 {
+  margin: 0 0 8px;
+  font-size: 15px;
+}
+
+.strategy-card .strategy-notes {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin-top: 10px;
+  white-space: pre-wrap;
+}
+
+.strategy-card .strategy-meta {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin-top: 10px;
+}
+
+.strategy-card .strategy-quickstats {
+  display: flex;
+  gap: 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  margin-top: 8px;
+  min-height: 18px;
+}
+
+.strategy-card .strategy-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.pnl-positive { color: var(--green); font-weight: 600; }
+.pnl-negative { color: var(--red); font-weight: 600; }
+
+.empty-state {
+  padding: 50px 20px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+/* ---------- Modal ---------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 16px;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.modal {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  width: 100%;
+  max-width: 620px;
+  padding: 24px;
+}
+
+.modal h2 { margin: 0 0 18px; font-size: 18px; }
+
+.day-detail-modal { max-width: 560px; }
+
+.trade-detail-modal { max-width: 640px; }
+
+.trade-detail-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px 20px;
+  padding: 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
+}
+.trade-detail-stats > div { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+.trade-detail-stats .label { color: var(--text-muted); font-size: 12px; }
+
+.trade-detail-section { margin-bottom: 16px; }
+.trade-detail-section h4 {
+  margin: 0 0 8px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
+}
+
+.modal-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.modal-header-row h2 { margin: 0; font-size: 15px; font-weight: 600; }
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.form-grid .full { grid-column: 1 / -1; }
+
+.field label {
+  display: block;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 5px;
+}
+
+.field select,
+.field input,
+.field textarea {
+  width: 100%;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  font-size: 13px;
+  font-family: inherit;
+}
+
+.field textarea { resize: vertical; min-height: 60px; }
+
+.toggle-group { display: flex; gap: 8px; }
+.toggle-group button {
+  flex: 1;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+}
+.toggle-group button.active-yes { background: var(--green-bg); color: var(--green); border-color: transparent; }
+.toggle-group button.active-no { background: var(--red-bg); color: var(--red); border-color: transparent; }
+
+.confluence-list { display: flex; flex-direction: column; gap: 8px; }
+.confluence-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+.confluence-item input { width: 16px; height: 16px; }
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.computed-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* ---------- Outcome (Kanban) ---------- */
+/* Each outcome section (Win / Loss / Breakeven) takes the FULL page width
+   and stacks on top of the next one -- not 3 side-by-side columns. Inside
+   each section, cards flow left-to-right and wrap onto the next line once
+   a row fills up. */
+.kanban {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.kanban-col {
+  width: 100%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px;
+  min-height: 60px;
+}
+
+.kanban-col-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 4px 6px 10px;
+}
+
+/* Cards flow left-to-right and wrap onto the next line once a row is full,
+   instead of stacking in one long vertical column (which used to make a
+   column with e.g. 70 wins run way deeper than a column with 5 losses). */
+.kanban-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  align-items: start;
+}
+
+.kanban-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  margin-bottom: 0;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.kanban-card:hover { border-color: var(--accent); }
+
+.kanban-card .row1 {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.kanban-card .date { color: var(--text-muted); font-size: 12px; margin-bottom: 8px; }
+
+/* ---------- Calendar ---------- */
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.calendar-header h2 { margin: 0; font-size: 18px; }
+.calendar-nav { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+.calendar-nav select { min-width: 140px; }
+
+/* ---------- Strategy Performance modal filter bar ---------- */
+.perf-filters-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr) 110px;
+  gap: 6px;
+}
+
+.calendar-dow {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  padding-bottom: 6px;
+}
+
+.calendar-week-dow { color: var(--text-muted); }
+
+.calendar-week-summary {
+  min-height: 92px;
+  background: var(--bg-elevated);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  text-align: center;
+}
+
+.calendar-week-summary .week-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.calendar-week-summary span:last-child { font-weight: 700; font-size: 13px; }
+
+.calendar-cell {
+  min-height: 92px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px;
+  cursor: default;
+}
+
+.calendar-cell.empty { background: transparent; border-color: transparent; }
+.calendar-cell.has-trades { cursor: pointer; }
+.calendar-cell.has-trades:hover { border-color: var(--accent); }
+
+.calendar-cell .day-num { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+
+.calendar-cell.day-win { background: var(--green-bg); }
+.calendar-cell.day-loss { background: var(--red-bg); }
+.calendar-cell.day-breakeven { background: var(--yellow-bg); }
+
+.calendar-cell .day-pnl { font-weight: 700; font-size: 13px; }
+.calendar-cell .day-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+.day-detail-list { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
+
+@media (max-width: 900px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .app-shell { padding: 20px; }
+}
+
+/* ---- Mistake / emotion tags ---- */
+.chip-mistake { background: var(--red-bg); color: var(--red); border-color: transparent; }
+
+.mistake-tag-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.mistake-tag-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-size: 12.5px;
+  cursor: pointer;
+  background: var(--bg-hover);
+}
+.mistake-tag-item input[type="checkbox"] { margin: 0; }
+.mistake-tag-delete {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 11px;
+  padding: 0 0 0 4px;
+}
+.mistake-tag-delete:hover { color: var(--red); }
+
+/* ---- No-setup discipline nudge banner ---- */
+.no-setup-banner {
+  background: var(--yellow-bg);
+  color: var(--yellow);
+  border: 1px solid var(--yellow);
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+/* ---- Sortable trade table headers ---- */
+.sortable-th { cursor: pointer; user-select: none; white-space: nowrap; }
+.sortable-th:hover { color: var(--accent); }
+
+/* ---- Pagination ---- */
+.pagination-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 14px;
+}
+
+/* ---- Challenges page ---- */
+.challenge-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+.challenge-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+.challenge-card:hover { border-color: var(--accent); }
+.challenge-card.inactive { opacity: 0.6; }
+/* Breached (max or daily drawdown) accounts: darker than a plain inactive
+   card and no hover highlight, since there's nothing left to do with them
+   besides look at the trade history -- visually pushes them to the back
+   next to accounts still open for trading (they're also sorted last). */
+.challenge-card.breached {
+  opacity: 0.5;
+  filter: grayscale(40%) brightness(0.85);
+}
+.challenge-card.breached:hover { border-color: var(--border); }
+
+.challenge-trades-modal { max-width: 640px; }
+.challenge-card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.challenge-card-title { font-weight: 700; font-size: 15px; }
+.challenge-card-meta { font-size: 12px; color: var(--text-muted); }
+
+.progress-row { display: flex; flex-direction: column; gap: 4px; }
+.progress-row-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); }
+.progress-track {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--bg-hover);
+  overflow: hidden;
+  position: relative;
+}
+.progress-fill { height: 100%; border-radius: 999px; transition: width 0.3s ease; }
+.progress-fill.fill-target { background: var(--green); }
+.progress-fill.fill-drawdown { background: var(--red); }
+.progress-fill.fill-drawdown.warn { background: var(--yellow); }
+
+.challenge-status-badge {
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+.challenge-status-badge.status-active { background: rgba(59,130,246,0.15); color: var(--accent); }
+.challenge-status-badge.status-passed { background: var(--green-bg); color: var(--green); }
+.challenge-status-badge.status-failed { background: var(--red-bg); color: var(--red); }
+
+.challenge-card-actions { display: flex; gap: 8px; margin-top: auto; padding-top: 6px; }

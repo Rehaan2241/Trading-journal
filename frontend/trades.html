@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Trades · Trading Journal</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <div class="app-title">📈 Trading Journal</div>
+    <nav class="app-nav" id="app-nav"></nav>
+
+    <div style="display:flex; justify-content:flex-end; gap:10px; margin-bottom:14px; flex-wrap:wrap;">
+      <a class="btn" id="btn-export-csv" href="#" target="_blank" rel="noopener">⬇ Export CSV</a>
+      <input type="file" id="f-import-csv" accept=".csv,text/csv" style="display:none;" />
+      <button class="btn" id="btn-import-csv">⬆ Import CSV</button>
+      <a class="btn" id="btn-export-full" href="#" target="_blank" rel="noopener" title="Bundles trades + chart screenshots into one .zip -- use this to move your journal to a new device">⬇ Export Full Backup (.zip)</a>
+      <input type="file" id="f-import-full" accept=".zip" style="display:none;" />
+      <button class="btn" id="btn-import-full" title="Restores trades + chart screenshots from a .zip made by 'Export Full Backup'">⬆ Import Full Backup</button>
+      <button class="btn btn-primary" id="btn-new-trade">+ New Trade</button>
+    </div>
+
+    <div id="import-result-banner" class="no-setup-banner" style="display:none;"></div>
+
+    <div id="no-setup-banner" class="no-setup-banner" style="display:none;"></div>
+    <div id="no-account-banner" class="no-setup-banner" style="display:none;"></div>
+
+    <div class="filters-bar" id="filters-bar"></div>
+
+    <div class="table-wrap" id="trades-table-wrap">
+      <div class="empty-state">Loading trades…</div>
+    </div>
+
+    <div class="pagination-bar" id="pagination-bar" style="display:none;"></div>
+  </div>
+
+  <!-- Add/Edit Trade Modal -->
+  <div class="modal-overlay" id="trade-modal" style="display:none;">
+    <div class="modal">
+      <h2 id="modal-title">New Trade</h2>
+      <form id="trade-form">
+        <input type="hidden" id="trade-id" />
+        <div class="form-grid">
+          <div class="field">
+            <label>Date</label>
+            <input type="date" id="f-trade-date" required />
+          </div>
+          <div class="field full">
+            <label>Trading Account <span style="font-weight:400;">(only your active challenge accounts — account size &amp; Master/Phase are set automatically)</span></label>
+            <select id="modal-account" required>
+              <option value="">— Select an active account —</option>
+            </select>
+            <div class="computed-hint" id="account-select-hint"></div>
+          </div>
+
+          <div class="field full">
+            <label>Position</label>
+            <div class="toggle-group" id="f-position-toggle">
+              <button type="button" data-value="Long">Long</button>
+              <button type="button" data-value="Short">Short</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Pair</label>
+            <select id="modal-pair" required></select>
+          </div>
+          <div class="field">
+            <label>Add new pair (optional)</label>
+            <input type="text" id="f-new-pair" placeholder="e.g. GBP/JPY" />
+          </div>
+
+          <div class="field">
+            <label>Entry LTF</label>
+            <select id="modal-entry-ltf" required>
+              <option value="1m">1m</option>
+              <option value="3m">3m</option>
+              <option value="5m">5m</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>4H Candle</label>
+            <select id="modal-candle-4h" required>
+              <option value="3:30">3:30</option>
+              <option value="7:30">7:30</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Result</label>
+            <select id="modal-result" required>
+              <option value="Win">Win</option>
+              <option value="Loss">Loss</option>
+              <option value="Breakeven">Breakeven</option>
+            </select>
+          </div>
+          <div class="field">
+            <label id="f-pnl-label">PnL ($)</label>
+            <input type="number" step="0.01" min="0" id="f-pnl" required />
+          </div>
+
+          <div class="field">
+            <label>Risk Amount ($) — for R:R and Risk %</label>
+            <input type="number" step="0.01" id="f-risk-amount" />
+          </div>
+          <div class="field">
+            <div class="computed-hint" id="computed-hint" style="margin-top:22px;"></div>
+          </div>
+
+          <div class="field full">
+            <label>Setup</label>
+            <select id="modal-setup">
+              <option value="">— Select a setup first —</option>
+            </select>
+            <div class="computed-hint" id="setup-notes-hint"></div>
+          </div>
+
+          <div class="field full" id="confluence-section">
+            <label>Confluences <span style="font-weight:400;">(priority order — 1 is highest)</span></label>
+            <div class="setup-gate-hint" id="confluence-gate-hint">
+              Select a setup above to tag confluences.
+            </div>
+            <div class="confluence-list" id="confluence-list" style="display:none;"></div>
+          </div>
+
+          <div class="field full">
+            <label>Mistakes / Emotions <span style="font-weight:400;">(what went wrong, if anything — pick as many as apply)</span></label>
+            <div class="mistake-tag-list" id="mistake-tag-list"></div>
+            <div style="display:flex; gap:8px; margin-top:8px;">
+              <input type="text" id="f-new-mistake-tag" placeholder="Add a new tag, e.g. Oversized Position" style="flex:1;" />
+              <button type="button" class="btn btn-sm" id="btn-add-mistake-tag">+ Add</button>
+            </div>
+          </div>
+
+          <div class="field full">
+            <label>Chart Screenshots by Timeframe <span style="font-weight:400;">(optional — attach only the ones you actually have, e.g. just 1m + 5m)</span></label>
+            <div class="tf-screenshot-grid" id="tf-screenshot-grid"></div>
+            <div class="computed-hint" id="screenshot-hint"></div>
+          </div>
+
+          <div class="field full" id="unassigned-screenshot-wrap" style="display:none;">
+            <label>Unlabeled Screenshots <span style="font-weight:400;">(attached before timeframe tagging existed — pick which timeframe each one actually is)</span></label>
+            <div class="unassigned-screenshot-list" id="unassigned-screenshot-list"></div>
+          </div>
+
+          <div class="field full">
+            <label>Notes / Lesson Learned</label>
+            <textarea id="f-notes" placeholder="What went well, what to improve..."></textarea>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn" id="btn-cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-save">Save Trade</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/filters.js"></script>
+  <script src="js/trades.js"></script>
+  <script>
+    renderNav("trades");
+    initTradesPage();
+  </script>
+</body>
+</html>
+ 

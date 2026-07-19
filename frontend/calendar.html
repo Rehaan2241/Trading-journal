@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Calendar · Trading Journal</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <div class="app-title">📈 Trading Journal</div>
+    <nav class="app-nav" id="app-nav"></nav>
+
+    <div class="calendar-header">
+      <div>
+        <h2 id="calendar-month-label">—</h2>
+        <div class="computed-hint" id="calendar-master-month-pnl" style="margin:2px 0 0;"></div>
+      </div>
+      <div class="calendar-nav">
+        <select id="calendar-account-type" title="Filter by account type">
+          <option value="">All Accounts</option>
+          <option value="Master">Master Accounts</option>
+          <option value="Phase">Phase Accounts</option>
+        </select>
+        <select id="calendar-strategy" title="Filter by strategy">
+          <option value="">All Strategies</option>
+        </select>
+        <button class="btn btn-sm" id="btn-prev-month">&larr; Prev</button>
+        <button class="btn btn-sm" id="btn-today">Today</button>
+        <button class="btn btn-sm" id="btn-next-month">Next &rarr;</button>
+      </div>
+    </div>
+
+    <div class="calendar-grid" id="calendar-grid">
+      <div class="empty-state">Loading…</div>
+    </div>
+
+  </div>
+
+  <!-- Day Detail Popup Modal -->
+  <div class="modal-overlay" id="day-detail-modal" style="display:none;">
+    <div class="modal day-detail-modal">
+      <div class="modal-header-row">
+        <h2 id="day-detail-title">—</h2>
+        <button type="button" class="btn btn-sm" id="day-detail-close">✕ Close</button>
+      </div>
+      <div id="day-detail-body"></div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/calendar.js"></script>
+  <script>
+    renderNav("calendar");
+    initCalendarPage();
+  </script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dashboard · Trading Journal</title>
+<link rel="stylesheet" href="css/style.css" />
+<script src="js/vendor/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <div class="app-title">📈 Trading Journal</div>
+    <nav class="app-nav" id="app-nav"></nav>
+
+    <div class="panel" id="equity-curves-panel" style="margin-bottom:20px;">
+      <h3>Active Account Equity Curves</h3>
+      <div class="equity-account-filter" id="equity-account-filter"></div>
+      <div id="equity-curves-body">
+        <div class="empty-state">Loading…</div>
+      </div>
+    </div>
+
+    <div class="account-type-bar">
+      <select id="dash-strategy">
+        <option value="">All Trades</option>
+      </select>
+    </div>
+
+    <div id="no-setup-banner" class="no-setup-banner" style="display:none;"></div>
+
+    <div class="stat-grid" id="stat-grid">
+      <div class="empty-state">Loading stats…</div>
+    </div>
+
+    <div class="chart-grid">
+      <div class="panel">
+        <h3>Win Rate</h3>
+        <canvas id="chart-winrate"></canvas>
+      </div>
+      <div class="panel">
+        <h3>Long vs Short</h3>
+        <canvas id="chart-position"></canvas>
+      </div>
+      <div class="panel" style="grid-column: 1 / -1;">
+        <h3>Win Rate by Strategy <span style="font-weight:400; color:var(--text-muted);">(cumulative, per strategy's own trade sequence)</span></h3>
+        <canvas id="chart-strategy-trend"></canvas>
+      </div>
+      <div class="panel" id="panel-confluence-winrate" style="grid-column: 1 / -1; display:none;">
+        <h3 id="confluence-winrate-title">Confluence Win Rate</h3>
+        <div id="confluence-winrate-body"></div>
+      </div>
+      <div class="panel" style="grid-column: 1 / -1;">
+        <h3>Mistake / Emotion Breakdown <span style="font-weight:400; color:var(--text-muted);">(% of all losses that involved each tag)</span></h3>
+        <div id="mistake-breakdown-wrap"></div>
+      </div>
+      <div class="panel">
+        <h3>Performance by Pair</h3>
+        <div class="table-wrap" id="pair-table-wrap"></div>
+      </div>
+      <div class="panel">
+        <h3>Performance by Setup</h3>
+        <div class="table-wrap" id="setup-table-wrap"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script>
+    renderNav("dashboard");
+
+    const dashStrategySelect = document.getElementById("dash-strategy");
+
+    // Populate "All Trades" + one option per saved strategy (Type 1, Type 2,
+    // Type 3, ...) so you can drill into a single setup's win rate.
+    (async () => {
+      try {
+        const strategies = await Api.getStrategies();
+        dashStrategySelect.innerHTML =
+          `<option value="">All Trades</option>` +
+          strategies
+            .map((s) => `<option value="${s.id}">${escapeHtml(s.name)}</option>`)
+            .join("");
+      } catch (e) {
+        console.error("Failed to load strategies for dashboard filter", e);
+      }
+    })();
+
+    dashStrategySelect.addEventListener("change", () => {
+      loadDashboard({ setup_id: dashStrategySelect.value || undefined });
+    });
+
+    // Defaults to "All Trades" on first load.
+    loadDashboard({});
+  </script>
+</body>
+</html>

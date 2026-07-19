@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Pictures · Trading Journal</title>
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <div class="app-title">📈 Trading Journal</div>
+    <nav class="app-nav" id="app-nav"></nav>
+
+    <div style="margin-bottom:14px;">
+      <div class="computed-hint" style="margin:0;">
+        Every trade you attached a chart screenshot to, one card per trade. Each card shows its 1m screenshot by
+        default (or the first timeframe you attached, if there's no 1m) — click a card to flip through every
+        timeframe you saved for that trade.
+      </div>
+    </div>
+
+    <div class="filters-bar" id="filters-bar"></div>
+
+    <div class="picture-grid" id="picture-grid">
+      <div class="empty-state">Loading pictures…</div>
+    </div>
+  </div>
+
+  <!-- Picture lightbox -->
+  <div class="lightbox-overlay" id="picture-lightbox" style="display:none;">
+    <div class="lightbox-box">
+      <div class="lightbox-header-row">
+        <div class="lightbox-title" id="lightbox-title"></div>
+        <button type="button" class="btn btn-sm" id="lightbox-close">✕ Close</button>
+      </div>
+      <div class="lightbox-image-wrap">
+        <button type="button" class="lightbox-arrow prev" id="lightbox-prev" title="Previous">‹</button>
+        <img id="lightbox-img" src="" alt="Chart screenshot" />
+        <button type="button" class="lightbox-arrow next" id="lightbox-next" title="Next">›</button>
+      </div>
+      <div class="lightbox-tf-strip" id="lightbox-tf-strip"></div>
+      <div class="lightbox-caption" id="lightbox-caption"></div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/filters.js"></script>
+  <script src="js/pictures.js"></script>
+  <script>
+    renderNav("pictures");
+    initPicturesPage();
+  </script>
+</body>
+</html>
